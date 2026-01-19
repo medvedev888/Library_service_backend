@@ -38,3 +38,22 @@ spring:
     access-key: ${MINIO_USER}
     secret-key: ${MINIO_PASSWORD}
     bucket: library_service
+
+
+token:
+  signing:
+    key: ${JWT_SECRET}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+           - health
+           - info
+           - metrics
+           - loggers
+
+  endpoint:
+    health:
+      show-details: always
