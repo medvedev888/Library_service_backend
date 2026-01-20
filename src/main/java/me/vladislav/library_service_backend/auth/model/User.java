@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "users", indexes = {
-@Index(name = "users_login", columnList = "login", unique = true)
+@Index(name = "users_email", columnList = "email", unique = true)
 })
 public class User {
     @Id
@@ -19,8 +19,8 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "login", unique = true, nullable = false)
-    private String login;
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -29,8 +29,8 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role;
 
-    public User(String login, String password, Role role) {
-        this.login = login;
+    public User(String email, String password, Role role) {
+        this.email = email;
         this.password = password;
         this.role = role;
     }

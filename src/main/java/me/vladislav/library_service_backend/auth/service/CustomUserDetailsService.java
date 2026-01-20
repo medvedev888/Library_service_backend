@@ -1,8 +1,7 @@
 package me.vladislav.library_service_backend.auth.service;
 
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.vladislav.library_service_backend.auth.exception.UserNotFoundException;
 import me.vladislav.library_service_backend.auth.model.User;
 import me.vladislav.library_service_backend.auth.repository.UserRepository;
 import me.vladislav.library_service_backend.auth.security.CustomUserDetails;
@@ -18,8 +17,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        User user = userRepository.getUserByLogin(login).orElseThrow(() -> new UsernameNotFoundException("User with login: '" + login + "' not found"));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.getUserByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User with login: '" + email + "' not found"));
         return new CustomUserDetails(user);
     }
 

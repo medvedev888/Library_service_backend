@@ -32,7 +32,7 @@ public class JwtService {
         if (userDetails instanceof CustomUserDetails) {
             User user = ((CustomUserDetails) userDetails).getUser();
             claims.put("id", user.getId());
-            claims.put("email", user.getLogin());
+            claims.put("email", user.getEmail());
             claims.put("role", user.getRole());
         }
         return generateToken(claims, userDetails);

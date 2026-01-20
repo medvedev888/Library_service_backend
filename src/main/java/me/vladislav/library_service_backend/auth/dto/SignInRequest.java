@@ -1,5 +1,6 @@
 package me.vladislav.library_service_backend.auth.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -10,9 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SignInRequest {
-    @NotBlank(message = "Login is required")
-    @Size(min = 3, max = 50, message = "Login must be between 3 and 50 characters long")
-    private String login;
+    @NotBlank(message = "Email is required")
+    @Email(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$",
+            message = "Email format is invalid")
+    @Size(max = 255, message = "Email must be at most 255 characters long")
+    private String email;
 
     @NotBlank(message = "Password is required")
     @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters long")

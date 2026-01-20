@@ -34,7 +34,7 @@ public class AuthenticationController {
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
         User user = userDetails.getUser();
-        UserResponse response = new UserResponse(user.getLogin(), user.getRole());
+        UserResponse response = new UserResponse(user.getEmail(), user.getRole());
         return ResponseEntity.ok(response);
     }
 

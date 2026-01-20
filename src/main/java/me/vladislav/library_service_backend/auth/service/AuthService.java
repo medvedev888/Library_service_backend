@@ -18,13 +18,13 @@ public class AuthService {
     private final JwtService jwtService;
 
     public String register(SignUpRequest request) {
-        UserDTO userDTO = new UserDTO(request.getLogin(), request.getPassword(), request.getRole());
+        UserDTO userDTO = new UserDTO(request.getEmail(), request.getPassword(), request.getRole());
         User user = userService.create(userDTO);
         return jwtService.generateToken(new CustomUserDetails(user));
     }
 
     public String login(SignInRequest request) {
-        User user = userService.getByLogin(request.getLogin());
+        User user = userService.getByEmail(request.getEmail());
         if (!userService.checkPassword(request.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException();
         }

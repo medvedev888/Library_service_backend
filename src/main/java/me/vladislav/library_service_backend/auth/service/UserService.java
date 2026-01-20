@@ -18,22 +18,22 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User create(UserDTO userDTO) {
-        User user = new User(userDTO.login(), userDTO.password(), userDTO.role());
-        if (userRepository.existsByLogin(user.getLogin())) {
-            throw new UserAlreadyExistsException(user.getLogin());
+        User user = new User(userDTO.email(), userDTO.password(), userDTO.role());
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new UserAlreadyExistsException(user.getEmail());
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    public User getByLogin(String login) {
-        return userRepository.getUserByLogin(login)
-                .orElseThrow(() -> new UserNotFoundException(login));
+    public User getByEmail(String email) {
+        return userRepository.getUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
     }
 
     public User getCurrentUser() {
-        var login = SecurityContextHolder.getContext().getAuthentication().getName();
-        return getByLogin(login);
+        var email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return getByEmail(email);
     }
 
     public boolean checkPassword(String rawPassword, String encodedPassword) {
