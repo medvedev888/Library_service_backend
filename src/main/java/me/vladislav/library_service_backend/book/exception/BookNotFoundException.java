@@ -9,4 +9,11 @@ public class BookNotFoundException extends BookException {
                 "Книга с id " + id + " не найдена"
         );
     }
+
+    public BookNotFoundException(String isbn) {
+        super(
+                HttpStatus.NOT_FOUND,
+                "Книга с isbn " + isbn + " не найдена"
+        );
+    }
 }

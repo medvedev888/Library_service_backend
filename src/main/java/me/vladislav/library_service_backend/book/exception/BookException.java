@@ -8,4 +8,5 @@ public abstract class BookException extends AppException {
     protected BookException(HttpStatus status, String message) {
         super(status, "Ошибка работы с книгой", message);
     }
+
 }
