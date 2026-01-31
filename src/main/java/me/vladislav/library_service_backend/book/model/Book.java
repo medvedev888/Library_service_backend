@@ -57,6 +57,4 @@ public class Book {
     @Column(nullable = false, length = 17, unique = true)
     private String isbn;
 
-    @Column
-    private Long copies;
 }
