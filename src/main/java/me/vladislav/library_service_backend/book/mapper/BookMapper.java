@@ -5,7 +5,7 @@ import me.vladislav.library_service_backend.book.dto.CreateBookRequest;
 import me.vladislav.library_service_backend.book.dto.UpdateBookRequest;
 import me.vladislav.library_service_backend.book.model.Author;
 import me.vladislav.library_service_backend.book.model.Book;
-import me.vladislav.library_service_backend.book.model.Library;
+import me.vladislav.library_service_backend.library.model.Library;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

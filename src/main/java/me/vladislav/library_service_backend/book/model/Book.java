@@ -2,6 +2,7 @@ package me.vladislav.library_service_backend.book.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import me.vladislav.library_service_backend.library.model.Library;
 
 import java.time.LocalDate;
 import java.util.Set;

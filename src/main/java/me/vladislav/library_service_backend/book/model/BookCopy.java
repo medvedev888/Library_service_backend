@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import me.vladislav.library_service_backend.library.model.Library;
 
 @Getter
 @Setter

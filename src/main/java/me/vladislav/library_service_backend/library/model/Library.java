@@ -1,7 +1,8 @@
-package me.vladislav.library_service_backend.book.model;
+package me.vladislav.library_service_backend.library.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import me.vladislav.library_service_backend.book.model.Book;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
