@@ -3,18 +3,18 @@ package me.vladislav.library_service_backend.book.service;
 
 import lombok.RequiredArgsConstructor;
 import me.vladislav.library_service_backend.book.dto.BookDTO;
-import me.vladislav.library_service_backend.book.exception.AuthorNotFoundException;
+import me.vladislav.library_service_backend.book.exception.AuthorReferenceNotFoundException;
 import me.vladislav.library_service_backend.book.exception.BookNotFoundException;
 import me.vladislav.library_service_backend.book.exception.DuplicateBookException;
-import me.vladislav.library_service_backend.library.exception.LibraryNotFoundException;
 import me.vladislav.library_service_backend.book.mapper.BookMapper;
 import me.vladislav.library_service_backend.book.model.Author;
 import me.vladislav.library_service_backend.book.model.Book;
-import me.vladislav.library_service_backend.library.model.Library;
 import me.vladislav.library_service_backend.book.repository.AuthorRepository;
 import me.vladislav.library_service_backend.book.repository.BookRepository;
-import me.vladislav.library_service_backend.library.repository.LibraryRepository;
 import me.vladislav.library_service_backend.common.exception.InvalidParameterException;
+import me.vladislav.library_service_backend.library.exception.LibraryNotFoundException;
+import me.vladislav.library_service_backend.library.model.Library;
+import me.vladislav.library_service_backend.library.repository.LibraryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -116,7 +116,7 @@ public class BookService {
                     authorRepository.findAllById(request.getAuthorIds())
             );
             if (authors.size() != request.getAuthorIds().size()) {
-                throw new AuthorNotFoundException();
+                throw new AuthorReferenceNotFoundException();
             }
             book.setAuthors(authors);
         }

@@ -13,7 +13,15 @@ import java.util.Set;
 @AllArgsConstructor
 
 @Entity
-@Table(name = "authors")
+@Table(
+        name = "authors",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_author_fullname",
+                        columnNames = {"surname", "name", "middle_name"}
+                )
+        }
+)
 public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

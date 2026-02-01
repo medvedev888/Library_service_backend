@@ -2,18 +2,18 @@ package me.vladislav.library_service_backend.book.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class AuthorNotFoundException extends AuthorException {
-    public AuthorNotFoundException(Long id) {
+public class AuthorReferenceNotFoundException extends BookException {
+    public AuthorReferenceNotFoundException(Long id) {
         super(
                 HttpStatus.BAD_REQUEST,
                 "Автор с id " + id + " не найден"
         );
     }
 
-    public AuthorNotFoundException(String surname, String name, String middleName) {
+    public AuthorReferenceNotFoundException() {
         super(
                 HttpStatus.BAD_REQUEST,
-                "Автор " + name + " " + middleName + " " + surname + " не найден"
+                "Один или несколько авторов не найдено"
         );
     }
 }
