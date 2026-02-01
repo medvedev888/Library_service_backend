@@ -1,6 +1,5 @@
 package me.vladislav.library_service_backend.book.model;
 
-import jakarta.persistence.Entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +13,7 @@ import me.vladislav.library_service_backend.library.model.Library;
 
 @Entity
 @Table(
-        name = "book_copies",
+        name = "book_inventories",
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uk_book_library",
@@ -22,7 +21,7 @@ import me.vladislav.library_service_backend.library.model.Library;
                 )
         }
 )
-public class BookCopy {
+public class BookInventory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +41,3 @@ public class BookCopy {
     @Column(nullable = false)
     private Long availableCopies;
 }
-
