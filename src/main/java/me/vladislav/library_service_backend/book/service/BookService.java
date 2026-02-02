@@ -6,13 +6,13 @@ import me.vladislav.library_service_backend.book.dto.BookDTO;
 import me.vladislav.library_service_backend.book.exception.AuthorReferenceNotFoundException;
 import me.vladislav.library_service_backend.book.exception.BookNotFoundException;
 import me.vladislav.library_service_backend.book.exception.DuplicateBookException;
+import me.vladislav.library_service_backend.book.exception.LibraryReferenceNotFoundException;
 import me.vladislav.library_service_backend.book.mapper.BookMapper;
 import me.vladislav.library_service_backend.book.model.Author;
 import me.vladislav.library_service_backend.book.model.Book;
 import me.vladislav.library_service_backend.book.repository.AuthorRepository;
 import me.vladislav.library_service_backend.book.repository.BookRepository;
 import me.vladislav.library_service_backend.common.exception.InvalidParameterException;
-import me.vladislav.library_service_backend.library.exception.LibraryNotFoundException;
 import me.vladislav.library_service_backend.library.model.Library;
 import me.vladislav.library_service_backend.library.repository.LibraryRepository;
 import org.springframework.data.domain.Page;
@@ -126,7 +126,7 @@ public class BookService {
                     libraryRepository.findAllById(request.getLibraryIds())
             );
             if (libraries.size() != request.getLibraryIds().size()) {
-                throw new LibraryNotFoundException();
+                throw new LibraryReferenceNotFoundException();
             }
             book.setLibraries(libraries);
         }

@@ -7,7 +7,6 @@ import me.vladislav.library_service_backend.book.exception.DuplicateAuthorExcept
 import me.vladislav.library_service_backend.book.mapper.AuthorMapper;
 import me.vladislav.library_service_backend.book.model.Author;
 import me.vladislav.library_service_backend.book.repository.AuthorRepository;
-import me.vladislav.library_service_backend.book.repository.BookRepository;
 import me.vladislav.library_service_backend.common.exception.InvalidParameterException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +27,6 @@ import java.util.Set;
 public class AuthorService {
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
-    private final BookRepository bookRepository;
 
 
     @Transactional(readOnly = true)

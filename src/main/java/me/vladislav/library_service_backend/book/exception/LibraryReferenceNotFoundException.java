@@ -1,17 +1,16 @@
-package me.vladislav.library_service_backend.library.exception;
+package me.vladislav.library_service_backend.book.exception;
 
-import me.vladislav.library_service_backend.book.exception.BookException;
 import org.springframework.http.HttpStatus;
 
-public class LibraryNotFoundException extends LibraryException {
-    public LibraryNotFoundException(Long id) {
+public class LibraryReferenceNotFoundException extends BookException {
+    public LibraryReferenceNotFoundException(Long id) {
         super(
                 HttpStatus.BAD_REQUEST,
                 "Библиотека с id " + id + " не найдена"
         );
     }
 
-    public LibraryNotFoundException() {
+    public LibraryReferenceNotFoundException() {
         super(
                 HttpStatus.BAD_REQUEST,
                 "Одна или несколько библиотек не найдены"
