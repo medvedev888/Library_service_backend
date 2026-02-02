@@ -15,8 +15,10 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface BookMapper {
 
+    @Mapping(target = "id", ignore = true)
     BookDTO toDTO(CreateBookRequest request);
 
+    @Mapping(target = "id", ignore = true)
     BookDTO toDTO(UpdateBookRequest request);
 
     @Mapping(target = "authors", expression = "java(mapAuthorIds(dto.getAuthorIds()))")

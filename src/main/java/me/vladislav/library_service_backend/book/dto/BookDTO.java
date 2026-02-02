@@ -11,6 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookDTO {
+    private Long id;
     private String title;
     private Set<Long> authorIds;
     private Set<Long> libraryIds;
