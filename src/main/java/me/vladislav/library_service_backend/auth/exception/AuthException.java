@@ -1,7 +1,10 @@
 package me.vladislav.library_service_backend.auth.exception;
 
-public class AuthException extends RuntimeException {
-    public AuthException(String message) {
-        super("Authorization error: " + message);
+import me.vladislav.library_service_backend.common.exception.AppException;
+import org.springframework.http.HttpStatus;
+
+public class AuthException extends AppException {
+    protected AuthException(HttpStatus status, String message) {
+        super(status, "Ошибка авторизации", message);
     }
 }

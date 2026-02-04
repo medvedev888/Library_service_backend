@@ -6,13 +6,13 @@ import me.vladislav.library_service_backend.auth.exception.AuthException;
 import me.vladislav.library_service_backend.common.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -50,6 +50,17 @@ public class GlobalExceptionHandler {
 
         ApiResponse body = ApiResponse.error("Ошибка валидации параметров", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ApiResponse> handleAccessDenied(AuthorizationDeniedException ex) {
+
+        ApiResponse body = ApiResponse.error(
+                "У вас нет прав для выполнения этого действия",
+                        List.of(ex.getMessage())
+        );
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
     }
 
     // Кастомные исключения всего приложения

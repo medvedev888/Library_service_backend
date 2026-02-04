@@ -11,6 +11,7 @@ import me.vladislav.library_service_backend.common.dto.ApiResponse;
 import me.vladislav.library_service_backend.common.exception.InvalidParameterException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class BookInventoryController {
     }
 
 
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping
     public ResponseEntity<ApiResponse> create(
             @RequestBody @Valid CreateBookInventoryRequest request
@@ -53,6 +55,8 @@ public class BookInventoryController {
                 .body(ApiResponse.success("Инвентарь книги создан", savedBookInventory));
     }
 
+
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse> update(
             @PathVariable Long id,
@@ -67,6 +71,8 @@ public class BookInventoryController {
         return ResponseEntity.ok(ApiResponse.success("Инвентарь книги обновлён", savedBookInventory));
     }
 
+
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> delete(@PathVariable Long id) {
         if (id < 0) {

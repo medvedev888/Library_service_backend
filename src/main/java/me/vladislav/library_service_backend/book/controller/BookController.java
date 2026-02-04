@@ -12,6 +12,7 @@ import me.vladislav.library_service_backend.common.dto.ApiResponse;
 import me.vladislav.library_service_backend.common.exception.InvalidParameterException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,6 +45,7 @@ public class BookController {
     }
 
 
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping
     public ResponseEntity<ApiResponse> create(@RequestBody @Valid CreateBookRequest request) {
         BookDTO bookDTO = bookMapper.toDTO(request);
@@ -51,6 +53,8 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Книга успешно добавлена", savedBook));
     }
 
+
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @PatchMapping("/{isbn}")
     public ResponseEntity<ApiResponse> update(
             @PathVariable String isbn,
@@ -61,6 +65,8 @@ public class BookController {
         return ResponseEntity.ok().body(ApiResponse.success("Книга успешно обновлена", updatedBook));
     }
 
+
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> delete(@PathVariable Long id) {
         if (id < 0) {
