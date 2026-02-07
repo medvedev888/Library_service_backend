@@ -2,18 +2,21 @@ package me.vladislav.library_service_backend.book.service;
 
 import lombok.RequiredArgsConstructor;
 import me.vladislav.library_service_backend.book.dto.BookInventoryDTO;
-import me.vladislav.library_service_backend.book.exception.BookInventoryNotFoundException;
-import me.vladislav.library_service_backend.book.exception.DuplicateBookInventoryException;
+import me.vladislav.library_service_backend.book.exception.*;
 import me.vladislav.library_service_backend.book.mapper.BookInventoryMapper;
+import me.vladislav.library_service_backend.book.model.Book;
 import me.vladislav.library_service_backend.book.model.BookInventory;
 import me.vladislav.library_service_backend.book.repository.BookInventoryRepository;
 import me.vladislav.library_service_backend.common.exception.InvalidParameterException;
+import me.vladislav.library_service_backend.library.model.Library;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -141,4 +144,32 @@ public class BookInventoryService {
         }
         bookInventoryRepository.deleteById(id);
     }
+
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void decreaseAvailableCopies(Book book, Library library) {
+        BookInventory bookInventory = bookInventoryRepository
+                .findByBookAndLibrary(book, library)
+                .orElseThrow(() -> new BookNotFoundInInventoryException("Книга не найдена в библиотеке"));
+
+
+        if (bookInventory.getAvailableCopies() <= 0) {
+            throw new BookNotAvailableException("Нет доступных экземпляров книги");
+        }
+
+        bookInventory.setAvailableCopies(bookInventory.getAvailableCopies() - 1);
+        bookInventoryRepository.save(bookInventory);
+    }
+
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void increaseAvailableCopies(Book book, Library library) {
+        BookInventory bookInventory = bookInventoryRepository
+                .findByBookAndLibrary(book, library)
+                .orElseThrow(() -> new BookNotFoundInInventoryException("Книга не найдена в библиотеке"));
+
+        bookInventory.setAvailableCopies(bookInventory.getAvailableCopies() + 1);
+        bookInventoryRepository.save(bookInventory);
+    }
+
 }

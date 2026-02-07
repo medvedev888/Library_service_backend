@@ -1,6 +1,8 @@
 package me.vladislav.library_service_backend.book.repository;
 
+import me.vladislav.library_service_backend.book.model.Book;
 import me.vladislav.library_service_backend.book.model.BookInventory;
+import me.vladislav.library_service_backend.library.model.Library;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -10,4 +12,6 @@ public interface BookInventoryRepository extends JpaRepository<BookInventory, Lo
     Optional<BookInventory> findByBookIdAndLibraryId(Long bookId, Long libraryId);
 
     boolean existsByBookIdAndLibraryId(Long bookId, Long libraryId);
+
+    Optional<BookInventory> findByBookAndLibrary(Book book, Library library);
 }
