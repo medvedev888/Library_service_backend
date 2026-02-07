@@ -11,10 +11,7 @@ import me.vladislav.library_service_backend.book.service.BookInventoryService;
 import me.vladislav.library_service_backend.library.model.Library;
 import me.vladislav.library_service_backend.library.repository.LibraryRepository;
 import me.vladislav.library_service_backend.loan.dto.BookLoanDTO;
-import me.vladislav.library_service_backend.loan.exception.BookLoanReservationException;
-import me.vladislav.library_service_backend.loan.exception.BookReferenceNotFoundException;
-import me.vladislav.library_service_backend.loan.exception.LibraryReferenceNotFoundException;
-import me.vladislav.library_service_backend.loan.exception.UserReferenceNotFoundException;
+import me.vladislav.library_service_backend.loan.exception.*;
 import me.vladislav.library_service_backend.loan.mapper.BookLoanMapper;
 import me.vladislav.library_service_backend.loan.model.BookLoan;
 import me.vladislav.library_service_backend.loan.model.LoanStatus;
@@ -76,20 +73,93 @@ public class BookLoanService {
         return bookLoanMapper.toDTO(bookLoan);
     }
 
-    public void approveReservation(Long loanId) {
 
+    @Transactional
+    public BookLoanDTO approveReservation(Long loanId) {
+        BookLoan bookLoan = bookLoanRepository.findById(loanId)
+                .orElseThrow(() -> new BookLoanNotFoundException(loanId));
+
+        if (bookLoan.getStatus() != LoanStatus.PENDING) {
+            throw new BookLoanStateException(
+                    HttpStatus.CONFLICT,
+                    "Бронь не может быть подтверждена в текущем статусе"
+            );
+        }
+
+        bookLoan.setStatus(LoanStatus.RESERVED);
+
+        bookLoanRepository.save(bookLoan);
+        return bookLoanMapper.toDTO(bookLoan);
     }
 
-    public void issueBook(Long loanId) {
 
+    @Transactional
+    public BookLoanDTO issueBook(Long loanId) {
+        BookLoan bookLoan = bookLoanRepository.findById(loanId)
+                .orElseThrow(() -> new BookLoanNotFoundException(loanId));
+
+        if (bookLoan.getStatus() != LoanStatus.RESERVED) {
+            throw new BookLoanStateException(
+                    HttpStatus.CONFLICT,
+                    "Книгу можно выдать только по подтверждённой брони"
+            );
+        }
+
+        bookLoan.setStatus(LoanStatus.ISSUED);
+        bookLoan.setIssuedAt(LocalDateTime.now());
+        bookLoan.setDueAt(LocalDateTime.now().plusMonths(3));
+
+        bookLoanRepository.save(bookLoan);
+        return bookLoanMapper.toDTO(bookLoan);
     }
 
-    public void returnBook(Long loanId) {
 
+    @Transactional
+    public BookLoanDTO returnBook(Long loanId) {
+        BookLoan bookLoan = bookLoanRepository.findById(loanId)
+                .orElseThrow(() -> new BookLoanNotFoundException(loanId));
+
+        if (bookLoan.getStatus() != LoanStatus.ISSUED && bookLoan.getStatus() != LoanStatus.OVERDUE) {
+            throw new BookLoanStateException(
+                    HttpStatus.CONFLICT,
+                    "Вернуть можно только выданную или просроченную книгу"
+            );
+        }
+
+        bookLoan.setStatus(LoanStatus.RETURNED);
+        bookLoan.setReturnedAt(LocalDateTime.now());
+
+        try {
+            bookInventoryService.increaseAvailableCopies(bookLoan.getBook(), bookLoan.getLibrary());
+        } catch (BookNotFoundInInventoryException ex) {
+            throw new BookLoanReturnException(ex.getStatus(), ex.getMessage());
+        }
+
+        return bookLoanMapper.toDTO(bookLoan);
     }
 
-    public void cancelReservation(Long loanId) {
 
+    @Transactional
+    public BookLoanDTO cancelReservation(Long loanId) {
+        BookLoan bookLoan = bookLoanRepository.findById(loanId)
+                .orElseThrow(() -> new BookLoanNotFoundException(loanId));
+
+        if (bookLoan.getStatus() != LoanStatus.PENDING && bookLoan.getStatus() != LoanStatus.RESERVED) {
+            throw new BookLoanStateException(
+                    HttpStatus.CONFLICT,
+                    "Отменить можно только ожидающую или подтверждённую бронь"
+            );
+        }
+
+        bookLoan.setStatus(LoanStatus.CANCELLED);
+
+        try {
+            bookInventoryService.increaseAvailableCopies(bookLoan.getBook(), bookLoan.getLibrary());
+        } catch (BookNotFoundInInventoryException ex) {
+            throw new BookLoanReturnException(ex.getStatus(), ex.getMessage());
+        }
+
+        return bookLoanMapper.toDTO(bookLoan);
     }
 
 }

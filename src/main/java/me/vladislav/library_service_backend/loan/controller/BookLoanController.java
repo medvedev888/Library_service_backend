@@ -6,15 +6,12 @@ import me.vladislav.library_service_backend.auth.security.CustomUserDetails;
 import me.vladislav.library_service_backend.common.dto.ApiResponse;
 import me.vladislav.library_service_backend.loan.dto.BookLoanDTO;
 import me.vladislav.library_service_backend.loan.dto.ReserveBookRequest;
-import me.vladislav.library_service_backend.loan.model.BookLoan;
 import me.vladislav.library_service_backend.loan.service.BookLoanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 
@@ -28,14 +25,53 @@ public class BookLoanController {
     @PostMapping("/reserve")
     public ResponseEntity<ApiResponse> reserveBook(@RequestBody ReserveBookRequest request,
                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
-        BookLoanDTO savedBookLoan = bookLoanService.reserveBook(
+        BookLoanDTO bookLoan = bookLoanService.reserveBook(
                 userDetails.getUser().getId(),
                 request.bookId(),
                 request.libraryId()
         );
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Бронь успешно оформлена", savedBookLoan));
+                .body(ApiResponse.success("Бронь успешно оформлена", bookLoan));
     }
+
+
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    @PostMapping("/{loanId}/approve")
+    public ResponseEntity<ApiResponse> approve(@PathVariable Long loanId) {
+        BookLoanDTO bookLoan = bookLoanService.approveReservation(loanId);
+        return ResponseEntity
+                .ok()
+                .body(ApiResponse.success("Бронь успешно подтверждена", bookLoan));
+    }
+
+
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    @PostMapping("/{loanId}/issue")
+    public ResponseEntity<ApiResponse> issueBook(@PathVariable Long loanId) {
+        BookLoanDTO bookLoan = bookLoanService.issueBook(loanId);
+        return ResponseEntity
+                .ok()
+                .body(ApiResponse.success("Книга успешно выдана", bookLoan));
+    }
+
+
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    @PostMapping("/{loanId}/return")
+    public ResponseEntity<ApiResponse> returnBook(@PathVariable Long loanId) {
+        BookLoanDTO bookLoan = bookLoanService.returnBook(loanId);
+        return ResponseEntity
+                .ok()
+                .body(ApiResponse.success("Книга успешно возвращена", bookLoan));
+    }
+
+
+    @PostMapping("/{loanId}/cancel")
+    public ResponseEntity<ApiResponse> cancelReservation(@PathVariable Long loanId) {
+        BookLoanDTO bookLoan = bookLoanService.cancelReservation(loanId);
+        return ResponseEntity
+                .ok()
+                .body(ApiResponse.success("Бронь успешно отменена", bookLoan));
+    }
+
 }
