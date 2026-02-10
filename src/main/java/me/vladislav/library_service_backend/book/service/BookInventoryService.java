@@ -12,6 +12,7 @@ import me.vladislav.library_service_backend.book.model.BookInventory;
 import me.vladislav.library_service_backend.book.repository.BookInventoryRepository;
 import me.vladislav.library_service_backend.common.exception.InvalidParameterException;
 import me.vladislav.library_service_backend.library.model.Library;
+import me.vladislav.library_service_backend.user.service.LibrarianService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,9 +30,9 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Service
 public class BookInventoryService {
-
     private final BookInventoryRepository bookInventoryRepository;
     private final BookInventoryMapper bookInventoryMapper;
+    private final LibrarianService librarianService;
 
 
     @Transactional(readOnly = true)
@@ -88,6 +89,7 @@ public class BookInventoryService {
 
     @Transactional
     public BookInventoryDTO create(BookInventoryDTO dto) {
+        librarianService.checkLibraryAccess(dto.getLibraryId());
 
         boolean exists = bookInventoryRepository.existsByBookIdAndLibraryId(
                 dto.getBookId(),
@@ -115,6 +117,7 @@ public class BookInventoryService {
 
     @Transactional
     public BookInventoryDTO update(BookInventoryDTO dto) {
+        librarianService.checkLibraryAccess(dto.getLibraryId());
 
         BookInventory inventory = bookInventoryRepository.findById(dto.getId())
                 .orElseThrow(() -> new BookInventoryNotFoundException(dto.getId()));
@@ -141,9 +144,11 @@ public class BookInventoryService {
 
     @Transactional
     public void delete(Long id) {
-        if (!bookInventoryRepository.existsById(id)) {
-            throw new BookInventoryNotFoundException(id);
-        }
+        BookInventory bookInventory = bookInventoryRepository.findById(id)
+                .orElseThrow(() -> new BookInventoryNotFoundException(id));
+
+        librarianService.checkLibraryAccess(bookInventory.getLibrary().getId());
+
         bookInventoryRepository.deleteById(id);
     }
 

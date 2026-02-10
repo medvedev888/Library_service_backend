@@ -14,6 +14,7 @@ import me.vladislav.library_service_backend.user.exception.LibrarianNotFoundExce
 import me.vladislav.library_service_backend.user.mapper.LibrarianMapper;
 import me.vladislav.library_service_backend.user.model.Librarian;
 import me.vladislav.library_service_backend.user.repository.LibrarianRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,17 +28,17 @@ public class LibrarianService {
     private final LibraryRepository libraryRepository;
 
     @Transactional
-    public LibrarianDTO create(LibrarianDTO librarianDTO) {
-        User user = userRepository.findById(librarianDTO.getUserId())
-                .orElseThrow(() -> new UserNotFoundException(librarianDTO.getUserId()));
+    public LibrarianDTO create(LibrarianDTO dto) {
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(dto.getUserId()));
 
         Library library = null;
-        if (librarianDTO.getLibraryId() != null) {
-            library = libraryRepository.findById(librarianDTO.getLibraryId())
-                    .orElseThrow(() -> new LibraryNotFoundException(librarianDTO.getLibraryId()));
+        if (dto.getLibraryId() != null) {
+            library = libraryRepository.findById(dto.getLibraryId())
+                    .orElseThrow(() -> new LibraryNotFoundException(dto.getLibraryId()));
         }
 
-        Librarian librarian = librarianMapper.toEntity(librarianDTO);
+        Librarian librarian = librarianMapper.toEntity(dto);
         librarian.setUser(user);
         librarian.setLibrary(library);
 
@@ -47,17 +48,8 @@ public class LibrarianService {
 
 
     @Transactional
-    public LibrarianDTO assignLibrary(Long librarianId, Long libraryId, User currentUser) {
-        if (!currentUser.getRole().equals(Role.LIBRARIAN)) {
-            throw new ForbiddenActionException("Только библиотекари могут назначать библиотеку");
-        }
-
-        Librarian currentLibrarian = librarianRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new LibrarianNotFoundException(currentUser.getId()));
-
-        if (!currentLibrarian.getLibrary().getId().equals(libraryId)) {
-            throw new ForbiddenActionException("Нельзя назначить библиотеку, к которой вы не принадлежите");
-        }
+    public LibrarianDTO assignLibrary(Long librarianId, Long libraryId) {
+        checkLibraryAccess(libraryId);
 
         Librarian librarian = librarianRepository.findById(librarianId)
                 .orElseThrow(() -> new LibrarianNotFoundException(librarianId));
@@ -69,6 +61,25 @@ public class LibrarianService {
 
         librarian = librarianRepository.save(librarian);
         return librarianMapper.toDto(librarian);
+    }
+
+
+    @Transactional(readOnly = true)
+    public void checkLibraryAccess(Long libraryId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.getUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+
+        if (!user.getRole().equals(Role.LIBRARIAN)) {
+            throw new ForbiddenActionException("Только библиотекари могут выполнять это действие");
+        }
+
+        Librarian librarian = librarianRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new LibrarianNotFoundException(user.getId()));
+
+        if (librarian.getLibrary() == null || !librarian.getLibrary().getId().equals(libraryId)) {
+            throw new ForbiddenActionException("Доступ запрещён для этой библиотеки");
+        }
     }
 
 }

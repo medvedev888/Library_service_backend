@@ -25,7 +25,6 @@ public class BookInventoryController {
     private final BookInventoryService bookInventoryService;
     private final BookInventoryMapper bookInventoryMapper;
 
-
     @GetMapping
     public ResponseEntity<ApiResponse> getAll(
             @RequestParam(defaultValue = "0") int page,

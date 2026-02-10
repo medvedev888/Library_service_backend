@@ -9,6 +9,7 @@ import me.vladislav.library_service_backend.library.exception.LibraryNotFoundExc
 import me.vladislav.library_service_backend.library.mapper.LibraryMapper;
 import me.vladislav.library_service_backend.library.model.Library;
 import me.vladislav.library_service_backend.library.repository.LibraryRepository;
+import me.vladislav.library_service_backend.user.service.LibrarianService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,9 +25,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Service
 public class LibraryService {
-
     private final LibraryRepository libraryRepository;
     private final LibraryMapper libraryMapper;
+    private final LibrarianService librarianService;
+
 
     @Transactional(readOnly = true)
     public List<LibraryDTO> getAll(
@@ -70,6 +72,7 @@ public class LibraryService {
                 .toList();
     }
 
+
     @Transactional
     public LibraryDTO create(LibraryDTO libraryDTO) {
         boolean exists = libraryRepository.existsByAddress(libraryDTO.getAddress());
@@ -84,8 +87,11 @@ public class LibraryService {
         return libraryMapper.toDTO(saved);
     }
 
+
     @Transactional
     public LibraryDTO update(LibraryDTO libraryDTO) {
+        librarianService.checkLibraryAccess(libraryDTO.getId());
+
         Library library = libraryRepository.findById(libraryDTO.getId())
                 .orElseThrow(() -> new LibraryNotFoundException(libraryDTO.getId()));
 
@@ -106,8 +112,10 @@ public class LibraryService {
         return libraryMapper.toDTO(updated);
     }
 
+
     @Transactional
     public void delete(Long id) {
+        librarianService.checkLibraryAccess(id);
         if (!libraryRepository.existsById(id)) {
             throw new LibraryNotFoundException(id);
         }

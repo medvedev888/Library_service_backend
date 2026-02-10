@@ -22,11 +22,11 @@ public class UserProfileService {
 
 
     @Transactional
-    public UserProfile create(UserProfileDTO userProfileDTO) {
-        User user = userRepository.findById(userProfileDTO.getUserId())
-                .orElseThrow(() -> new UserNotFoundException(userProfileDTO.getUserId()));
+    public UserProfile create(UserProfileDTO dto) {
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(dto.getUserId()));
 
-        UserProfile userProfile = userProfileMapper.toEntity(userProfileDTO);
+        UserProfile userProfile = userProfileMapper.toEntity(dto);
         userProfile.setUser(user);
 
         return userProfileRepository.save(userProfile);

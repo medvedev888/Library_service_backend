@@ -16,6 +16,7 @@ import me.vladislav.library_service_backend.loan.mapper.BookLoanMapper;
 import me.vladislav.library_service_backend.loan.model.BookLoan;
 import me.vladislav.library_service_backend.loan.model.LoanStatus;
 import me.vladislav.library_service_backend.loan.repository.BookLoanRepository;
+import me.vladislav.library_service_backend.user.service.LibrarianService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,13 +29,13 @@ import java.util.List;
 
 @Service
 public class BookLoanService {
-
     private final BookRepository bookRepository;
     private final LibraryRepository libraryRepository;
     private final UserRepository userRepository;
     private final BookLoanRepository bookLoanRepository;
     private final BookInventoryService bookInventoryService;
     private final BookLoanMapper bookLoanMapper;
+    private final LibrarianService librarianService;
 
 
     @Transactional
@@ -78,6 +79,8 @@ public class BookLoanService {
     public BookLoanDTO approveReservation(Long loanId) {
         BookLoan bookLoan = bookLoanRepository.findById(loanId)
                 .orElseThrow(() -> new BookLoanNotFoundException(loanId));
+
+        librarianService.checkLibraryAccess(bookLoan.getLibrary().getId());
 
         if (bookLoan.getStatus() != LoanStatus.PENDING) {
             throw new BookLoanStateException(
