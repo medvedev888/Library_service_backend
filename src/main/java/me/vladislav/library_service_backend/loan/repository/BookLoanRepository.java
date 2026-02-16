@@ -15,6 +15,6 @@ import java.util.List;
 @Repository
 public interface BookLoanRepository extends JpaRepository<BookLoan, Long> {
     boolean existsByUserAndBookAndLibraryAndStatusIn(User user, Book book, Library library, List<LoanStatus> status);
-
+    List<BookLoan> findAllByUser_Id(Long userId);
     List<BookLoan> findAllByStatusInAndDueAtBefore(List<LoanStatus> statuses, LocalDateTime now);
 }
