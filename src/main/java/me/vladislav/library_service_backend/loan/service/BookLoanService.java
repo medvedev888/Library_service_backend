@@ -23,9 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
 @RequiredArgsConstructor
-
 @Service
 public class BookLoanService {
 
@@ -35,7 +33,6 @@ public class BookLoanService {
     private final BookLoanRepository bookLoanRepository;
     private final BookInventoryService bookInventoryService;
     private final BookLoanMapper bookLoanMapper;
-
 
     @Transactional
     public BookLoanDTO reserveBook(Long userId, Long bookId, Long libraryId) {
@@ -49,9 +46,13 @@ public class BookLoanService {
                 .orElseThrow(() -> new LibraryReferenceNotFoundException(libraryId));
 
         boolean exists = bookLoanRepository.existsByUserAndBookAndLibraryAndStatusIn(
-                user, book, library, List.of(LoanStatus.PENDING, LoanStatus.RESERVED, LoanStatus.ISSUED));
+                user, book, library, List.of(LoanStatus.PENDING, LoanStatus.RESERVED, LoanStatus.ISSUED)
+        );
         if (exists) {
-            throw new BookLoanReservationException(HttpStatus.CONFLICT, "Вы уже забронировали эту книгу в этой библиотеке");
+            throw new BookLoanReservationException(
+                    HttpStatus.CONFLICT,
+                    "Вы уже забронировали эту книгу в этой библиотеке"
+            );
         }
 
         BookLoan bookLoan = BookLoan.builder()
@@ -73,7 +74,6 @@ public class BookLoanService {
         return bookLoanMapper.toDTO(bookLoan);
     }
 
-
     @Transactional
     public BookLoanDTO approveReservation(Long loanId) {
         BookLoan bookLoan = bookLoanRepository.findById(loanId)
@@ -88,10 +88,9 @@ public class BookLoanService {
 
         bookLoan.setStatus(LoanStatus.RESERVED);
 
-        bookLoanRepository.save(bookLoan);
+        bookLoan = bookLoanRepository.save(bookLoan);
         return bookLoanMapper.toDTO(bookLoan);
     }
-
 
     @Transactional
     public BookLoanDTO issueBook(Long loanId) {
@@ -109,10 +108,9 @@ public class BookLoanService {
         bookLoan.setIssuedAt(LocalDateTime.now());
         bookLoan.setDueAt(LocalDateTime.now().plusMonths(3));
 
-        bookLoanRepository.save(bookLoan);
+        bookLoan = bookLoanRepository.save(bookLoan);
         return bookLoanMapper.toDTO(bookLoan);
     }
-
 
     @Transactional
     public BookLoanDTO returnBook(Long loanId) {
@@ -135,9 +133,9 @@ public class BookLoanService {
             throw new BookLoanReturnException(ex.getStatus(), ex.getMessage());
         }
 
+        bookLoan = bookLoanRepository.save(bookLoan);
         return bookLoanMapper.toDTO(bookLoan);
     }
-
 
     @Transactional
     public BookLoanDTO cancelReservation(Long loanId) {
@@ -159,7 +157,56 @@ public class BookLoanService {
             throw new BookLoanReturnException(ex.getStatus(), ex.getMessage());
         }
 
+        bookLoan = bookLoanRepository.save(bookLoan);
         return bookLoanMapper.toDTO(bookLoan);
     }
 
+    // -------- Queries (for frontend lists/details) --------
+
+    /**
+     * Для GET /loans/my
+     * Нужно добавить в BookLoanRepository:
+     *   List<BookLoan> findAllByUser_Id(Long userId);
+     */
+    @Transactional(readOnly = true)
+    public List<BookLoanDTO> listMyLoans(Long userId) {
+        return bookLoanRepository.findAllByUser_Id(userId).stream()
+                .map(bookLoanMapper::toDTO)
+                .toList();
+    }
+
+    /**
+     * Для GET /loans (страницы библиотекаря)
+     * q — строка поиска по id/userId/bookId/libraryId/status
+     * status — фильтр по LoanStatus (PENDING/RESERVED/ISSUED/OVERDUE/RETURNED/CANCELLED)
+     */
+    @Transactional(readOnly = true)
+    public List<BookLoanDTO> listLoansForStaff(String q, String status) {
+        String qq = q == null ? "" : q.trim().toLowerCase();
+        String st = status == null ? "" : status.trim().toUpperCase();
+
+        return bookLoanRepository.findAll().stream()
+                .filter(l -> st.isBlank() || String.valueOf(l.getStatus()).equalsIgnoreCase(st))
+                .filter(l -> {
+                    if (qq.isBlank()) return true;
+                    String hay = (l.getId() + " " +
+                            (l.getUser() != null ? l.getUser().getId() : "") + " " +
+                            (l.getBook() != null ? l.getBook().getId() : "") + " " +
+                            (l.getLibrary() != null ? l.getLibrary().getId() : "") + " " +
+                            l.getStatus()).toLowerCase();
+                    return hay.contains(qq);
+                })
+                .map(bookLoanMapper::toDTO)
+                .toList();
+    }
+
+    /**
+     * Для GET /loans/{id} (CirculationPage)
+     */
+    @Transactional(readOnly = true)
+    public BookLoanDTO getLoanById(Long loanId) {
+        BookLoan loan = bookLoanRepository.findById(loanId)
+                .orElseThrow(() -> new BookLoanNotFoundException(loanId));
+        return bookLoanMapper.toDTO(loan);
+    }
 }
