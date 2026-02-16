@@ -39,6 +39,17 @@ spring:
     secret-key: ${MINIO_PASSWORD}
     bucket: library_service
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: eternal.martyr13579@gmail.com
+    password: "zyza pyuz jjad tmjn"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 token:
   signing:
@@ -59,6 +70,8 @@ management:
       show-details: always
 
 library:
+  password-reset:
+    token-ttl-minutes: 15
   daily-fine: 100
   scheduler:
     overdue-cron: "0 0 1 * * *"
