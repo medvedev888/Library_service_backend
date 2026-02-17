@@ -51,7 +51,6 @@ public class AuthenticationController {
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse> forgotPassword(@RequestBody @Valid ForgotPasswordRequest request) {
         passwordResetService.requestReset(request.getEmail());
-        // Всегда SUCCESS, даже если email не найден
         return ResponseEntity.ok(ApiResponse.success(
                 "Если такой email существует, на него отправлена ссылка для сброса пароля",
                 null

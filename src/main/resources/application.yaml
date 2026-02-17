@@ -75,3 +75,7 @@ library:
   daily-fine: 100
   scheduler:
     overdue-cron: "0 0 1 * * *"
+
+app:
+  frontend:
+    base-url: http://localhost:8080
