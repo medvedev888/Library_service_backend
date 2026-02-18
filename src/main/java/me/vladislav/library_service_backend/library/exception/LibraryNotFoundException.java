@@ -1,6 +1,5 @@
 package me.vladislav.library_service_backend.library.exception;
 
-import me.vladislav.library_service_backend.book.exception.BookException;
 import org.springframework.http.HttpStatus;
 
 public class LibraryNotFoundException extends LibraryException {
