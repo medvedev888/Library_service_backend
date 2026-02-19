@@ -16,7 +16,9 @@ import me.vladislav.library_service_backend.loan.mapper.BookLoanMapper;
 import me.vladislav.library_service_backend.loan.model.BookLoan;
 import me.vladislav.library_service_backend.loan.model.LoanStatus;
 import me.vladislav.library_service_backend.loan.repository.BookLoanRepository;
+import me.vladislav.library_service_backend.notification.dto.ReservationApprovedEvent;
 import me.vladislav.library_service_backend.user.service.LibrarianService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,8 @@ public class BookLoanService {
     private final BookInventoryService bookInventoryService;
     private final BookLoanMapper bookLoanMapper;
     private final LibrarianService librarianService;
+    private final ApplicationEventPublisher eventPublisher;
+
 
     @Transactional
     public BookLoanDTO reserveBook(Long userId, Long bookId, Long libraryId) {
@@ -90,8 +94,16 @@ public class BookLoanService {
         }
 
         bookLoan.setStatus(LoanStatus.RESERVED);
-
         bookLoan = bookLoanRepository.save(bookLoan);
+
+        eventPublisher.publishEvent(
+                new ReservationApprovedEvent(
+                        bookLoan.getId(),
+                        bookLoan.getUser().getEmail(),
+                        bookLoan.getBook().getTitle()
+                )
+        );
+
         return bookLoanMapper.toDTO(bookLoan);
     }
 
@@ -164,13 +176,7 @@ public class BookLoanService {
         return bookLoanMapper.toDTO(bookLoan);
     }
 
-    // -------- Queries (for frontend lists/details) --------
 
-    /**
-     * Для GET /loans/my
-     * Нужно добавить в BookLoanRepository:
-     *   List<BookLoan> findAllByUser_Id(Long userId);
-     */
     @Transactional(readOnly = true)
     public List<BookLoanDTO> listMyLoans(Long userId) {
         return bookLoanRepository.findAllByUser_Id(userId).stream()
@@ -178,11 +184,7 @@ public class BookLoanService {
                 .toList();
     }
 
-    /**
-     * Для GET /loans (страницы библиотекаря)
-     * q — строка поиска по id/userId/bookId/libraryId/status
-     * status — фильтр по LoanStatus (PENDING/RESERVED/ISSUED/OVERDUE/RETURNED/CANCELLED)
-     */
+
     @Transactional(readOnly = true)
     public List<BookLoanDTO> listLoansForStaff(String q, String status) {
         String qq = q == null ? "" : q.trim().toLowerCase();
@@ -203,13 +205,12 @@ public class BookLoanService {
                 .toList();
     }
 
-    /**
-     * Для GET /loans/{id} (CirculationPage)
-     */
+
     @Transactional(readOnly = true)
     public BookLoanDTO getLoanById(Long loanId) {
         BookLoan loan = bookLoanRepository.findById(loanId)
                 .orElseThrow(() -> new BookLoanNotFoundException(loanId));
         return bookLoanMapper.toDTO(loan);
     }
+
 }
