@@ -41,6 +41,11 @@ public class AuthenticationController {
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse> getCurrentUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Пользователь не авторизован", null));
+        }
+
         User user = userDetails.getUser();
         return ResponseEntity.ok().body(ApiResponse.success(
                 "Данные пользователя",

@@ -42,8 +42,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: eternal.martyr13579@gmail.com
-    password: "zyza pyuz jjad tmjn"
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -60,10 +60,10 @@ management:
     web:
       exposure:
         include:
-           - health
-           - info
-           - metrics
-           - loggers
+          - health
+          - info
+          - metrics
+          - loggers
 
   endpoint:
     health:
