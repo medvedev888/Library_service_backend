@@ -15,7 +15,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,6 +31,7 @@ import java.util.Set;
 public class AuthorService {
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
+    private final ObjectMapper objectMapper;
 
 
     @Transactional(readOnly = true)
@@ -124,4 +129,19 @@ public class AuthorService {
         }
         authorRepository.deleteById(id);
     }
+
+
+    @Transactional
+    public void importAuthorsFromJson(MultipartFile file) {
+        try {
+            List<AuthorDTO> authors = objectMapper.readValue(file.getInputStream(), new TypeReference<>() {});
+            for (AuthorDTO dto : authors) {
+                Author entity = authorMapper.toEntity(dto);
+                authorRepository.save(entity);
+            }
+        } catch (IOException e) {
+            throw new InvalidParameterException("Не удалось прочитать файл авторов: " + e.getMessage());
+        }
+    }
+
 }

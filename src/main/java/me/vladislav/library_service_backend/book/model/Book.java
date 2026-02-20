@@ -35,14 +35,6 @@ public class Book {
     )
     private Set<Author> authors;
 
-    @ManyToMany
-    @JoinTable(
-            name = "book_libraries",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "library_id")
-    )
-    private Set<Library> libraries;
-
     @Column(name = "publishing_house", nullable = false)
     private String publishingHouse;
 

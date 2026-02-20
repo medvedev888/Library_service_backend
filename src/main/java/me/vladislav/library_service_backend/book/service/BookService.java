@@ -6,15 +6,12 @@ import me.vladislav.library_service_backend.book.dto.BookDTO;
 import me.vladislav.library_service_backend.book.exception.AuthorReferenceNotFoundException;
 import me.vladislav.library_service_backend.book.exception.BookNotFoundException;
 import me.vladislav.library_service_backend.book.exception.DuplicateBookException;
-import me.vladislav.library_service_backend.book.exception.LibraryReferenceNotFoundException;
 import me.vladislav.library_service_backend.book.mapper.BookMapper;
 import me.vladislav.library_service_backend.book.model.Author;
 import me.vladislav.library_service_backend.book.model.Book;
 import me.vladislav.library_service_backend.book.repository.AuthorRepository;
 import me.vladislav.library_service_backend.book.repository.BookRepository;
 import me.vladislav.library_service_backend.common.exception.InvalidParameterException;
-import me.vladislav.library_service_backend.library.model.Library;
-import me.vladislav.library_service_backend.library.repository.LibraryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +19,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final AuthorRepository authorRepository;
-    private final LibraryRepository libraryRepository;
+    private final ObjectMapper objectMapper;
 
 
     @Transactional(readOnly = true)
@@ -121,16 +122,6 @@ public class BookService {
             book.setAuthors(authors);
         }
 
-        if (request.getLibraryIds() != null) {
-            Set<Library> libraries = new HashSet<>(
-                    libraryRepository.findAllById(request.getLibraryIds())
-            );
-            if (libraries.size() != request.getLibraryIds().size()) {
-                throw new LibraryReferenceNotFoundException();
-            }
-            book.setLibraries(libraries);
-        }
-
         return bookMapper.toDTO(book);
     }
 
@@ -141,6 +132,30 @@ public class BookService {
             throw new BookNotFoundException(id);
         }
         bookRepository.deleteById(id);
+    }
+
+
+    @Transactional
+    public void importBooksFromJson(MultipartFile file) {
+        try {
+            List<BookDTO> books = objectMapper.readValue(file.getInputStream(), new TypeReference<>() {});
+            for (BookDTO dto : books) {
+                Set<Long> authorIds = dto.getAuthorIds();
+                List<Long> foundIds = authorRepository.findAllById(authorIds)
+                        .stream().map(Author::getId).toList();
+
+                if (!new HashSet<>(foundIds).containsAll(authorIds)) {
+                    Set<Long> missing = new HashSet<>(authorIds);
+                    foundIds.forEach(missing::remove);
+                    throw new InvalidParameterException("Авторы с id " + missing + " не найдены");
+                }
+
+                Book entity = bookMapper.toEntity(dto);
+                bookRepository.save(entity);
+            }
+        } catch (IOException e) {
+            throw new InvalidParameterException("Не удалось прочитать файл книг: " + e.getMessage());
+        }
     }
 
 }

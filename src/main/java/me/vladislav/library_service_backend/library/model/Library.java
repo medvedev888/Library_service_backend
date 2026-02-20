@@ -2,12 +2,10 @@ package me.vladislav.library_service_backend.library.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import me.vladislav.library_service_backend.book.model.Book;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.Map;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -36,7 +34,4 @@ public class Library {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private LibraryStatus status;
-
-    @ManyToMany(mappedBy = "libraries")
-    private Set<Book> books;
 }

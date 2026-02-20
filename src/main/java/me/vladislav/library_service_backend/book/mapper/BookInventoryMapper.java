@@ -11,7 +11,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface BookInventoryMapper {
-
     @Mapping(target = "id", ignore = true)
     BookInventoryDTO toDTO(CreateBookInventoryRequest request);
 

@@ -9,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateBookInventoryRequest {
-
     @NotNull(message = "bookId обязателен")
     private Long bookId;
 

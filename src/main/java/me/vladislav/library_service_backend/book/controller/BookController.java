@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -75,4 +76,13 @@ public class BookController {
         bookService.delete(id);
         return ResponseEntity.ok().body(ApiResponse.success("Книга успешно удалена", null));
     }
+
+
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    @PostMapping("/import")
+    public ResponseEntity<ApiResponse> importBooks(@RequestParam("file") MultipartFile file) {
+        bookService.importBooksFromJson(file);
+        return ResponseEntity.ok(ApiResponse.success("Книги импортированы", null));
+    }
+
 }

@@ -10,8 +10,10 @@ import me.vladislav.library_service_backend.book.mapper.BookInventoryMapper;
 import me.vladislav.library_service_backend.book.model.Book;
 import me.vladislav.library_service_backend.book.model.BookInventory;
 import me.vladislav.library_service_backend.book.repository.BookInventoryRepository;
+import me.vladislav.library_service_backend.book.repository.BookRepository;
 import me.vladislav.library_service_backend.common.exception.InvalidParameterException;
 import me.vladislav.library_service_backend.library.model.Library;
+import me.vladislav.library_service_backend.library.repository.LibraryRepository;
 import me.vladislav.library_service_backend.user.service.LibrarianService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +23,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,8 +37,11 @@ import java.util.Set;
 @Service
 public class BookInventoryService {
     private final BookInventoryRepository bookInventoryRepository;
+    private final BookRepository bookRepository;
+    private final LibraryRepository libraryRepository;
     private final BookInventoryMapper bookInventoryMapper;
     private final LibrarianService librarianService;
+    private final ObjectMapper objectMapper;
 
 
     @Transactional(readOnly = true)
@@ -150,6 +159,32 @@ public class BookInventoryService {
         librarianService.checkLibraryAccess(bookInventory.getLibrary().getId());
 
         bookInventoryRepository.deleteById(id);
+    }
+
+
+    @Transactional
+    public void importBookInventoriesFromJson(MultipartFile file) {
+        try {
+            List<BookInventoryDTO> inventories = objectMapper.readValue(
+                    file.getInputStream(),
+                    new TypeReference<List<BookInventoryDTO>>() {
+                    }
+            );
+
+            for (BookInventoryDTO dto : inventories) {
+                if (!bookRepository.existsById(dto.getBookId())) {
+                    throw new InvalidParameterException("Книга с id " + dto.getBookId() + " не найдена");
+                }
+                if (!libraryRepository.existsById(dto.getLibraryId())) {
+                    throw new InvalidParameterException("Библиотека с id " + dto.getLibraryId() + " не найдена");
+                }
+
+                BookInventory entity = bookInventoryMapper.toEntity(dto);
+                bookInventoryRepository.save(entity);
+            }
+        } catch (IOException e) {
+            throw new InvalidParameterException("Не удалось прочитать файл инвентаря: " + e.getMessage());
+        }
     }
 
 

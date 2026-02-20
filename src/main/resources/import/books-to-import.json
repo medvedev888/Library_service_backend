@@ -1,0 +1,209 @@
+[
+  {
+    "title": "Евгений Онегин",
+    "authorIds": [1],
+    "publishingHouse": "АСТ",
+    "publicationYear": "1833-01-01",
+    "genre": "Роман",
+    "language": "Русский",
+    "isbn": "9785171234561"
+  },
+  {
+    "title": "Мёртвые души",
+    "authorIds": [2],
+    "publishingHouse": "Эксмо",
+    "publicationYear": "1842-01-01",
+    "genre": "Сатира",
+    "language": "Русский",
+    "isbn": "9785171234562"
+  },
+  {
+    "title": "Война и мир",
+    "authorIds": [3],
+    "publishingHouse": "Азбука",
+    "publicationYear": "1869-01-01",
+    "genre": "Роман",
+    "language": "Русский",
+    "isbn": "9785171234563"
+  },
+  {
+    "title": "Преступление и наказание",
+    "authorIds": [4],
+    "publishingHouse": "АСТ",
+    "publicationYear": "1866-01-01",
+    "genre": "Роман",
+    "language": "Русский",
+    "isbn": "9785171234564"
+  },
+  {
+    "title": "Идиот",
+    "authorIds": [4],
+    "publishingHouse": "АСТ",
+    "publicationYear": "1869-01-01",
+    "genre": "Роман",
+    "language": "Русский",
+    "isbn": "9785171234565"
+  },
+  {
+    "title": "Мастер и Маргарита",
+    "authorIds": [6],
+    "publishingHouse": "Эксмо",
+    "publicationYear": "1966-01-01",
+    "genre": "Фантастика",
+    "language": "Русский",
+    "isbn": "9785171234566"
+  },
+  {
+    "title": "Ревизор",
+    "authorIds": [2],
+    "publishingHouse": "Азбука",
+    "publicationYear": "1836-01-01",
+    "genre": "Комедия",
+    "language": "Русский",
+    "isbn": "9785171234567"
+  },
+  {
+    "title": "Отцы и дети",
+    "authorIds": [7],
+    "publishingHouse": "АСТ",
+    "publicationYear": "1862-01-01",
+    "genre": "Роман",
+    "language": "Русский",
+    "isbn": "9785171234568"
+  },
+  {
+    "title": "Капитанская дочка",
+    "authorIds": [1],
+    "publishingHouse": "Эксмо",
+    "publicationYear": "1836-01-01",
+    "genre": "Исторический роман",
+    "language": "Русский",
+    "isbn": "9785171234569"
+  },
+  {
+    "title": "Собачье сердце",
+    "authorIds": [6],
+    "publishingHouse": "АСТ",
+    "publicationYear": "1925-01-01",
+    "genre": "Фантастика",
+    "language": "Русский",
+    "isbn": "9785171234570"
+  },
+  {
+    "title": "Герой нашего времени",
+    "authorIds": [5],
+    "publishingHouse": "Азбука",
+    "publicationYear": "1840-01-01",
+    "genre": "Роман",
+    "language": "Русский",
+    "isbn": "9785171234571"
+  },
+  {
+    "title": "Записки из мёртвого дома",
+    "authorIds": [4],
+    "publishingHouse": "АСТ",
+    "publicationYear": "1861-01-01",
+    "genre": "Дневник",
+    "language": "Русский",
+    "isbn": "9785171234572"
+  },
+  {
+    "title": "Дядя Ваня",
+    "authorIds": [5],
+    "publishingHouse": "Эксмо",
+    "publicationYear": "1897-01-01",
+    "genre": "Пьеса",
+    "language": "Русский",
+    "isbn": "9785171234573"
+  },
+  {
+    "title": "Князь Серебряный",
+    "authorIds": [7],
+    "publishingHouse": "Азбука",
+    "publicationYear": "1858-01-01",
+    "genre": "Исторический роман",
+    "language": "Русский",
+    "isbn": "9785171234574"
+  },
+  {
+    "title": "Анна Каренина",
+    "authorIds": [3],
+    "publishingHouse": "АСТ",
+    "publicationYear": "1877-01-01",
+    "genre": "Роман",
+    "language": "Русский",
+    "isbn": "9785171234575"
+  },
+  {
+    "title": "Братья Карамазовы",
+    "authorIds": [4],
+    "publishingHouse": "Азбука",
+    "publicationYear": "1880-01-01",
+    "genre": "Роман",
+    "language": "Русский",
+    "isbn": "9785171234576"
+  },
+  {
+    "title": "Пиковая дама",
+    "authorIds": [1],
+    "publishingHouse": "Эксмо",
+    "publicationYear": "1834-01-01",
+    "genre": "Рассказ",
+    "language": "Русский",
+    "isbn": "9785171234577"
+  },
+  {
+    "title": "Вишнёвый сад",
+    "authorIds": [5],
+    "publishingHouse": "АСТ",
+    "publicationYear": "1904-01-01",
+    "genre": "Пьеса",
+    "language": "Русский",
+    "isbn": "9785171234578"
+  },
+  {
+    "title": "Лолита",
+    "authorIds": [6],
+    "publishingHouse": "Азбука",
+    "publicationYear": "1955-01-01",
+    "genre": "Роман",
+    "language": "Русский",
+    "isbn": "9785171234579"
+  },
+  {
+    "title": "Отцы и дети. Повесть",
+    "authorIds": [7],
+    "publishingHouse": "АСТ",
+    "publicationYear": "1862-01-01",
+    "genre": "Рассказ",
+    "language": "Русский",
+    "isbn": "9785171234580"
+  },
+  {
+    "title": "Кавказский пленник",
+    "authorIds": [7],
+    "publishingHouse": "АСТ",
+    "publicationYear": "1840-01-01",
+    "genre": "Рассказ",
+    "language": "Русский",
+    "isbn": "9785171234581"
+  },
+  {
+    "title": "Белая гвардия",
+    "authorIds": [6],
+    "publishingHouse": "Эксмо",
+    "publicationYear": "1925-01-01",
+    "genre": "Роман",
+    "language": "Русский",
+    "isbn": "9785171234582"
+  },
+  {
+    "title": "Руслан и Людмила",
+    "authorIds": [1],
+    "publishingHouse": "АСТ",
+    "publicationYear": "1820-01-01",
+    "genre": "Поэма",
+    "language": "Русский",
+    "isbn": "9785171234583"
+  }
+]

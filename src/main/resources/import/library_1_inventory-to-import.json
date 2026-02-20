@@ -1,0 +1,107 @@
+[
+  {
+    "id": null,
+    "bookId": 11,
+    "libraryId": 1,
+    "totalCopies": 5000,
+    "availableCopies": 5000
+  },
+  {
+    "id": null,
+    "bookId": 12,
+    "libraryId": 1,
+    "totalCopies": 10000,
+    "availableCopies": 10000
+  },
+  {
+    "id": null,
+    "bookId": 13,
+    "libraryId": 1,
+    "totalCopies": 0,
+    "availableCopies": 0
+  },
+  {
+    "id": null,
+    "bookId": 14,
+    "libraryId": 1,
+    "totalCopies": 1200,
+    "availableCopies": 1200
+  },
+  {
+    "id": null,
+    "bookId": 15,
+    "libraryId": 1,
+    "totalCopies": 3500,
+    "availableCopies": 3500
+  },
+  {
+    "id": null,
+    "bookId": 16,
+    "libraryId": 1,
+    "totalCopies": 800,
+    "availableCopies": 800
+  },
+  {
+    "id": null,
+    "bookId": 17,
+    "libraryId": 1,
+    "totalCopies": 20000,
+    "availableCopies": 20000
+  },
+  {
+    "id": null,
+    "bookId": 18,
+    "libraryId": 1,
+    "totalCopies": 1,
+    "availableCopies": 1
+  },
+  {
+    "id": null,
+    "bookId": 19,
+    "libraryId": 1,
+    "totalCopies": 9000,
+    "availableCopies": 9000
+  },
+  {
+    "id": null,
+    "bookId": 20,
+    "libraryId": 1,
+    "totalCopies": 150,
+    "availableCopies": 150
+  },
+  {
+    "id": null,
+    "bookId": 21,
+    "libraryId": 1,
+    "totalCopies": 700,
+    "availableCopies": 700
+  },
+  {
+    "id": null,
+    "bookId": 22,
+    "libraryId": 1,
+    "totalCopies": 100000,
+    "availableCopies": 100000
+  },
+  {
+    "id": null,
+    "bookId": 23,
+    "libraryId": 1,
+    "totalCopies": 3000,
+    "availableCopies": 3000
+  },
+  {
+    "id": null,
+    "bookId": 24,
+    "libraryId": 1,
+    "totalCopies": 4000,
+    "availableCopies": 4000
+  },
+  {
+    "id": null,
+    "bookId": 25,
+    "libraryId": 1,
+    "totalCopies": 3500,
+    "availableCopies": 3500
+  }
+]

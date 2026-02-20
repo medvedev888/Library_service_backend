@@ -21,9 +21,6 @@ public class CreateBookRequest {
     @NotEmpty(message = "У книги должен быть указан хотя бы один автор")
     private Set<Long> authorIds;
 
-    @NotEmpty(message = "Необходимо указать хотя бы одну библиотеку")
-    private Set<Long> libraryIds;
-
     @NotBlank(message = "Издательство не может быть пустым")
     @Size(max = 255, message = "Название издательства не должно превышать 255 символов")
     private String publishingHouse;
