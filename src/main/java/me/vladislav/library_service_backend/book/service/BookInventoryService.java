@@ -117,10 +117,10 @@ public class BookInventoryService {
 
     @Transactional
     public BookInventoryDTO update(BookInventoryDTO dto) {
-        librarianService.checkLibraryAccess(dto.getLibraryId());
-
         BookInventory inventory = bookInventoryRepository.findById(dto.getId())
                 .orElseThrow(() -> new BookInventoryNotFoundException(dto.getId()));
+
+        librarianService.checkLibraryAccess(inventory.getLibrary().getId());
 
         boolean countsChanged =
                 !Objects.equals(inventory.getTotalCopies(), dto.getTotalCopies()) ||
