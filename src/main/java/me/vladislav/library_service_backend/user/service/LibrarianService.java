@@ -66,7 +66,26 @@ public class LibrarianService {
 
     @Transactional(readOnly = true)
     public void checkLibraryAccess(Long libraryId) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Librarian librarian = getCurrentLibrarian();
+
+        if (librarian.getLibrary() == null ||
+                !librarian.getLibrary().getId().equals(libraryId)) {
+            throw new ForbiddenActionException("Доступ запрещён для этой библиотеки");
+        }
+    }
+
+
+    @Transactional(readOnly = true)
+    public LibrarianDTO getMyProfile() {
+        return librarianMapper.toDto(getCurrentLibrarian());
+    }
+
+
+    private Librarian getCurrentLibrarian() {
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
         User user = userRepository.getUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
 
@@ -74,12 +93,8 @@ public class LibrarianService {
             throw new ForbiddenActionException("Только библиотекари могут выполнять это действие");
         }
 
-        Librarian librarian = librarianRepository.findByUserId(user.getId())
+        return librarianRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new LibrarianNotFoundException(user.getId()));
-
-        if (librarian.getLibrary() == null || !librarian.getLibrary().getId().equals(libraryId)) {
-            throw new ForbiddenActionException("Доступ запрещён для этой библиотеки");
-        }
     }
 
 }

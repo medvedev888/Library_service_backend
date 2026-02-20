@@ -32,5 +32,13 @@ public class LibrarianController {
         ));
     }
 
+
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse> me() {
+        LibrarianDTO librarianDTO = librarianService.getMyProfile();
+        return ResponseEntity.ok(ApiResponse.success("Профиль библиотекаря", librarianDTO));
+    }
+
 }
 
